@@ -1,4 +1,3 @@
-using Assets.Scripts.JSON;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -10,14 +9,25 @@ namespace Tank
     public class GameManager : MonoBehaviour
     {
 
+        [SerializeField] private GameObject _campPrefab;
+
         private void Awake()
         {
             StartCoroutine(ConnectionManager.Get<Assets.Scripts.JSON.GetProjects>($"/project", CreateProject));
         }
 
-        private void CreateProject(Response<Assets.Scripts.JSON.GetProjects> response)
+        private void CreateProject(Assets.Scripts.JSON.GetProjects response)
         {
-            throw new NotImplementedException();
+            if (response.projects == null || response.projects.Count == 0) return;
+            foreach(Assets.Scripts.JSON.Project project in response.projects)
+            {
+                InstantiateCamp(project);
+            }
+            Debug.Log(response.projects.Count);
+        }
+        private void InstantiateCamp(Assets.Scripts.JSON.Project project)
+        {
+            Instantiate(_campPrefab);
         }
     }
 }

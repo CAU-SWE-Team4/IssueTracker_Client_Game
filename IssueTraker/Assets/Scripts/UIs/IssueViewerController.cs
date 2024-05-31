@@ -72,9 +72,9 @@ public class IssueViewerController : MonoBehaviour
         
     }
 
-    private void IssueInitialize(Assets.Scripts.JSON.Response<Assets.Scripts.JSON.GetIssue> issue)
+    private void IssueInitialize(Assets.Scripts.JSON.GetIssue issue)
     {
-        UpdateIssueData(issue.data);
+        UpdateIssueData(issue);
         //Get Comments
         StartCoroutine(ConnectionManager.Get<Assets.Scripts.JSON.GetComments>($"/project{projectId}/issue/{issueId}/comment", CommentsInitialize));
     }
@@ -84,9 +84,10 @@ public class IssueViewerController : MonoBehaviour
         IssueData issueData = new IssueData() { Title = value.Title, AssigneeId = value.AssigneeId, Description = value.Description, EditedDate = value.EditedDate, FixerId = value.FixerId, Priority = value.Priority, State = value.State, ReporterDate = value.ReporterDate, ReporterId = value.ReporterId};
     }
 
-    private void CommentsInitialize(Assets.Scripts.JSON.Response<Assets.Scripts.JSON.GetComments> issue)
+    private void CommentsInitialize(Assets.Scripts.JSON.GetComments issue)
     {
-        List<Assets.Scripts.JSON.Comment> commentslist = issue.data.comments;
+        if (issue.comments == null || issue.comments.Count == 0) return;
+        List<Assets.Scripts.JSON.Comment> commentslist = issue.comments;
         foreach (Assets.Scripts.JSON.Comment comment in commentslist)
         {
             CreateComments(comment);
