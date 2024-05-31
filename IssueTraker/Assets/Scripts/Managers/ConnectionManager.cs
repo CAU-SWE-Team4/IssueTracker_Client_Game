@@ -78,6 +78,23 @@ public class ConnectionManager : MonoBehaviour
         }
     }
 
+    public static IEnumerator Delete<T>(string routeName, Action<Response<T>> handleResponse = null)
+    {
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{handleRouteName(routeName)}", "DELETE"))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+
+            yield return request.SendWebRequest();
+
+            Response<T> apiReponse = JsonUtility.FromJson<Response<T>>(request.downloadHandler?.text);
+
+            if (handleResponse != null)
+                handleResponse(apiReponse);
+        }
+    }
+
     private static string handleRouteName(string routeName)
     {
         if (routeName.StartsWith("/"))
