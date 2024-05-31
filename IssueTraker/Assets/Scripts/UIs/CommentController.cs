@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.APIObjs
 {
-    public class CommentClass
+    public class CommentData
     {
         public string commentId;
         public string authorId;

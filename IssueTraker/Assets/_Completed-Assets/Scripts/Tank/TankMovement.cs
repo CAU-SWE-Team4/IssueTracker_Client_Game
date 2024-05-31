@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Complete
+namespace Tank
 {
     public class TankMovement : MonoBehaviour
     {

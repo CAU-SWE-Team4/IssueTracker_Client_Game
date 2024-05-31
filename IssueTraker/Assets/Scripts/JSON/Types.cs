@@ -14,10 +14,6 @@ namespace Assets.Scripts.JSON
         public string message;
     }
 
-}
-namespace Assets.Scripts.JSON.Post
-{
-
     [Serializable]
     public class login
     {
@@ -91,6 +87,76 @@ namespace Assets.Scripts.JSON.Post
         public string title;
         public List<UserRole> members;
     }
+
+    [Serializable]
+    public class NewIssue
+    {
+        public string title;
+        public string description;
+    }
+
+    [Serializable]
+    public class GetIssueList
+    {
+        public List<Issue> issues;
+    }
+
+    [Serializable]
+    public class Issue
+    {
+        public string issue_id;
+        public string issue_title;
+        public string reported_date;
+        public string state;
+    }
+
+    [Serializable]
+    public class GetIssue
+    {
+        public string Title;
+        public string Description;
+        public string ReporterId;
+        public string ReporterDate;
+        public string EditedDate;
+        public string AssigneeId;
+        public string FixerId;
+        public string Priority;
+        public string State;
+    }
+
+    [Serializable]
+    public class GetAssigneeSuggestion
+    {
+        public List<string> dev_ids;
+    }
+
+    [Serializable]
+    public class Assignee
+    {
+        public string user_id;
+        public string priority;
+    }
+
+    [Serializable]
+    public class UpdateContents
+    {
+        public string title;
+        public string description;
+    }
+
+
+    [Serializable]
+    public class UpdateStatus
+    {
+        public string state;
+    }
+
+    [Serializable]
+    public class NewComment
+    {
+        public string contents;
+    }
+
 
     [Serializable]
     public class GetComments

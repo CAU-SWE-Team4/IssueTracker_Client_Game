@@ -10,6 +10,8 @@ using Assets.Scripts.JSON;
 
 public class ConnectionManager : MonoBehaviour
 {
+    public static string id;
+    public static string pw;
     public static ConnectionManager instance { get; private set; }
     private void Awake()
     {
@@ -25,7 +27,7 @@ public class ConnectionManager : MonoBehaviour
     }
     public static IEnumerator Post<T>(string routeName, dynamic data, Action<Response<T>> handleResponse)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{handleRouteName(routeName)}", "POST"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{handleRouteName(routeName)}/?id={{{id}}}&pw={{{pw}}}", "POST"))
         {
             string jsonFields = JsonUtility.ToJson(data);
 
@@ -44,7 +46,7 @@ public class ConnectionManager : MonoBehaviour
 
     public static IEnumerator Get<T>(string routeName, Action<Response<T>> handleResponse)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{handleRouteName(routeName)}", "GET"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{handleRouteName(routeName)}?id={{{id}}}&pw={{{pw}}}", "GET"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
@@ -60,11 +62,28 @@ public class ConnectionManager : MonoBehaviour
 
     public static IEnumerator Put<T>(string routeName, dynamic data, Action<Response<T>> handleResponse = null)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{handleRouteName(routeName)}", "PUT"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{handleRouteName(routeName)}?id={{{id}}}&pw={{{pw}}}", "PUT"))
         {
             string jsonFields = JsonUtility.ToJson(data);
 
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonFields));
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+
+            yield return request.SendWebRequest();
+
+            Response<T> apiReponse = JsonUtility.FromJson<Response<T>>(request.downloadHandler?.text);
+
+            if (handleResponse != null)
+                handleResponse(apiReponse);
+        }
+    }
+
+    public static IEnumerator Delete<T>(string routeName, Action<Response<T>> handleResponse = null)
+    {
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{handleRouteName(routeName)}?id={{{id}}}&pw={{{pw}}}", "DELETE"))
+        {
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("Accept", "application/json");
