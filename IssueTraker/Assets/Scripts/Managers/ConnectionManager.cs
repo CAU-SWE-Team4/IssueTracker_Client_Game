@@ -145,8 +145,10 @@ public class ConnectionManager : MonoBehaviour
     {
         using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{routeName}?id={id}&pw={pw}", "PUT"))
         {
+            string url = $"http://localhost:8080/{routeName}?id={id}&pw={pw}";
             string jsonFields = JsonUtility.ToJson(data);
 
+            Debug.Log($"request sent {url} : {jsonFields}");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonFields));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");

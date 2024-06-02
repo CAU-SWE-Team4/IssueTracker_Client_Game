@@ -16,10 +16,6 @@ public class IssueBlock : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _assigneeTxt;
     [SerializeField] private TextMeshProUGUI _reporterTxt;
     [SerializeField] private TextMeshProUGUI _dateTxt;
-    [SerializeField] private Color _newColor;
-    [SerializeField] private Color _disposedColor;
-    [SerializeField] private Color _fixedColor;
-    [SerializeField] private Color _closedColor;
 
     public void UpdateIssueBlock(string project_id, string issue_Id)
     {
@@ -43,15 +39,19 @@ public class IssueBlock : MonoBehaviour
         switch (state)
         {
             case "NEW":
-                _statusTxt.color = _newColor; break;
-            case "ASSIGNED":
-                _statusTxt.color = _newColor; break;
+                _statusTxt.color = Colors.IssueStateColor.NEW; break;
+            case "FIXED":
+                _statusTxt.color = Colors.IssueStateColor.FIXED; break;
             case "RESOLVED":
-                _statusTxt.color = _fixedColor; break;
+                _statusTxt.color = Colors.IssueStateColor.RESOLVED; break;
             case "CLOSED":
-                _statusTxt.color = _closedColor; break;
-            case "REOPENED":
-                _statusTxt.color = _newColor; break;
+                _statusTxt.color = Colors.IssueStateColor.CLOSED; break;
+            case "REOPEN":
+                _statusTxt.color = Colors.IssueStateColor.REOPEN; break;
+            case "DISPOSED":
+                _statusTxt.color = Colors.IssueStateColor.DISPOSED; break;
+            case "ASSIGNED":
+                _statusTxt.color = Colors.IssueStateColor.ASSIGNED; break;
         }
         _statusTxt.text = state;
     }

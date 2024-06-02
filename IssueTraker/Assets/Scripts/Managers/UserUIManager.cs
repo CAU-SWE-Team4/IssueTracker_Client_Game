@@ -28,7 +28,7 @@ public class UserUIManager : MonoBehaviour
         ActivateBlocker();
         _projectDashboard.SetActive(true);
         _issueViewer.SetActive(false);
-        _projectDashboard.transform.GetComponent<ProjectDashboardController>().UpdateProjectDashboard(project_id, project_title);
+        _projectDashboard.transform.GetComponent<ProjectDashboardController>().InitializeProjectDashboard(project_id, project_title);
     }
     public void RefreshProjectIssueList()
     {

@@ -24,6 +24,11 @@ public class ProjectDashboardController : MonoBehaviour
     //[SerializeField] private StatisticsViewer _statisticsViewer;
     [SerializeField] private TextMeshProUGUI _titleTxt;
 
+    [SerializeField] private TextMeshProUGUI _dayIssueTxt;
+    [SerializeField] private TextMeshProUGUI _monthIssueTxt;
+    [SerializeField] private TextMeshProUGUI _totalIssueTxt;
+    [SerializeField] private TextMeshProUGUI _closedIssueTxt;
+
     [SerializeField] private Button _searchBtn;
     [SerializeField] private Button _newIssueBtn;
     [SerializeField] private TMP_Dropdown _filterOption;
@@ -41,12 +46,26 @@ public class ProjectDashboardController : MonoBehaviour
         }
     }
 
-    public void UpdateProjectDashboard(string project_id, string projectTitle)
+    public void UpdateProjectDashboard()
+    {
+        InitializeProjectDashboard(projectId, issueId);
+    }
+
+    public void InitializeProjectDashboard(string project_id, string projectTitle)
     {
         projectId = project_id;
         _titleTxt.text = projectTitle;
         StartCoroutine(ConnectionManager.Get<JSON.UserRoles>($"project/{projectId}/userRole", ActivateNewIssue));
         StartCoroutine(ConnectionManager.Get<JSON.GetIssueList>($"project/{projectId}/issue", CreateIssueBlock));
+        StartCoroutine(ConnectionManager.Get<JSON.ProjectStatistic>($"project/{projectId}/issue/statistic", UpdateStatistic));
+    }
+
+    private void UpdateStatistic(ProjectStatistic obj)
+    {
+        _dayIssueTxt.text = obj.day_issues.ToString();
+        _monthIssueTxt.text = obj.month_issue.ToString();
+        _totalIssueTxt.text = obj.total_issue.ToString();
+        _closedIssueTxt.text = obj.closed_issues.ToString();
     }
 
     public void UpdateIssueList()
