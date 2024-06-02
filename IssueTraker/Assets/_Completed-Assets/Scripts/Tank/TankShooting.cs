@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Complete
+namespace Tank
 {
     public class TankShooting : MonoBehaviour
     {
@@ -15,7 +15,7 @@ namespace Complete
         public float m_MinLaunchForce = 15f;        // The force given to the shell if the fire button is not held.
         public float m_MaxLaunchForce = 30f;        // The force given to the shell if the fire button is held for the max charge time.
         public float m_MaxChargeTime = 0.75f;       // How long the shell can charge for before it is fired at max force.
-
+        public Transform m_FireContainer;
 
         private string m_FireButton;                // The input axis that is used for launching shells.
         private float m_CurrentLaunchForce;         // The force that will be given to the shell when the fire button is released.
@@ -54,7 +54,7 @@ namespace Complete
                 Fire ();
             }
             // Otherwise, if the fire button has just started being pressed...
-            else if (Input.GetButtonDown (m_FireButton))
+            else if (Input.GetButtonDown (m_FireButton) && Time.timeScale == 1)
             {
                 // ... reset the fired flag and reset the launch force.
                 m_Fired = false;
@@ -65,7 +65,7 @@ namespace Complete
                 m_ShootingAudio.Play ();
             }
             // Otherwise, if the fire button is being held and the shell hasn't been launched yet...
-            else if (Input.GetButton (m_FireButton) && !m_Fired)
+            else if (Input.GetButton (m_FireButton) && !m_Fired && Time.timeScale == 1)
             {
                 // Increment the launch force and update the slider.
                 m_CurrentLaunchForce += m_ChargeSpeed * Time.deltaTime;
@@ -73,7 +73,7 @@ namespace Complete
                 m_AimSlider.value = m_CurrentLaunchForce;
             }
             // Otherwise, if the fire button is released and the shell hasn't been launched yet...
-            else if (Input.GetButtonUp (m_FireButton) && !m_Fired)
+            else if (Input.GetButtonUp (m_FireButton) && !m_Fired && Time.timeScale == 1)
             {
                 // ... launch the shell.
                 Fire ();
@@ -89,7 +89,7 @@ namespace Complete
             // Create an instance of the shell and store a reference to it's rigidbody.
             Rigidbody shellInstance =
                 Instantiate (m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-
+            shellInstance.transform.SetParent(m_FireContainer);
             // Set the shell's velocity to the launch force in the fire position's forward direction.
             shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward; 
 
@@ -100,5 +100,13 @@ namespace Complete
             // Reset the launch force.  This is a precaution in case of missing button events.
             m_CurrentLaunchForce = m_MinLaunchForce;
         }
+
+        public void DestroyShell()
+        {
+            for(int i  = 0; i < m_FireContainer.childCount; i++)
+                Destroy(m_FireContainer.GetChild(i).gameObject);
+        }
+
+
     }
 }

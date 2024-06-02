@@ -1,180 +1,76 @@
-﻿using UnityEngine;
+using System;
 using System.Collections;
-//using UnityEngine.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+namespace Tank
 {
-    public int m_NumRoundsToWin = 5;        
-    public float m_StartDelay = 3f;         
-    public float m_EndDelay = 3f;           
-    public CameraControl m_CameraControl;   
-    public Text m_MessageText;              
-    public GameObject m_TankPrefab;         
-    public TankManager[] m_Tanks;           
-
-
-    private int m_RoundNumber;              
-    private WaitForSeconds m_StartWait;     
-    private WaitForSeconds m_EndWait;       
-/*    private TankManager m_RoundWinner;
-    private TankManager m_GameWinner;       
-*/
-
-    private void Start()
+    public class GameManager : MonoBehaviour
     {
-        m_StartWait = new WaitForSeconds(m_StartDelay);
-        m_EndWait = new WaitForSeconds(m_EndDelay);
 
-        SpawnAllTanks();
-        SetCameraTargets();
-
-        StartCoroutine(GameLoop());
-    }
-
-
-    private void SpawnAllTanks()
-    {
-        for (int i = 0; i < m_Tanks.Length; i++)
+        [SerializeField] private GameObject _campPrefab;
+        [SerializeField] private Transform _projectSpawn;
+        [SerializeField] private TankShooting _tankShooting;
+        [SerializeField] private UserUIManager _userUIManager;
+        public static GameManager instance { get; private set; }
+        private void Awake()
         {
-            m_Tanks[i].m_Instance =
-                Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
-            m_Tanks[i].m_PlayerNumber = i + 1;
-            m_Tanks[i].Setup();
-        }
-    }
+            if (instance && !instance.Equals(this))
+            {
+                Destroy(gameObject);
+                return;
+            }
 
-
-    private void SetCameraTargets()
-    {
-        Transform[] targets = new Transform[m_Tanks.Length];
-
-        for (int i = 0; i < targets.Length; i++)
-        {
-            targets[i] = m_Tanks[i].m_Instance.transform;
+            instance = this;
         }
 
-        m_CameraControl.m_Targets = targets;
-    }
-
-
-    private IEnumerator GameLoop()
-    {
-        yield return StartCoroutine(RoundStarting());
-        yield return StartCoroutine(RoundPlaying());
-        yield return StartCoroutine(RoundEnding());
-
-/*        if (m_GameWinner != null)
+        public void Exit()
         {
             SceneManager.LoadScene(0);
         }
-        else
+
+        private void Start()
         {
-            StartCoroutine(GameLoop());
-        }
-*/    }
-
-
-    private IEnumerator RoundStarting()
-    {
-        yield return m_StartWait;
-    }
-
-
-    private IEnumerator RoundPlaying()
-    {
-        yield return null;
-    }
-
-
-    private IEnumerator RoundEnding()
-    {
-        yield return m_EndWait;
-    }
-
-
-    private bool OneTankLeft()
-    {
-        int numTanksLeft = 0;
-
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            if (m_Tanks[i].m_Instance.activeSelf)
-                numTanksLeft++;
+            //StartCoroutine(ConnectionManager.Get<JSON.GetProjects>($"project", "", "", CreateProject));
+            StartCoroutine(ConnectionManager.Get<JSON.GetProjects>($"project", CreateProject));
         }
 
-        return numTanksLeft <= 1;
-    }
-
-/*
-    private TankManager GetRoundWinner()
-    {
-        for (int i = 0; i < m_Tanks.Length; i++)
+        private void CreateProject(JSON.GetProjects response)
         {
-            if (m_Tanks[i].m_Instance.activeSelf)
-                return m_Tanks[i];
+            Debug.Log("GetProjectInfoSucceed");
+            if (response.projects == null || response.projects.Count == 0) return;
+            int pos = 0;
+            foreach(JSON.Project project in response.projects)
+            {
+                GameObject Camp = InstantiateCamp(project);
+                Camp.transform.position = _projectSpawn.position + Vector3.forward * pos;
+                Camp.transform.Rotate(new Vector3(0, 225, 0));
+                pos+=10;
+            }
+            Debug.Log(response.projects.Count);
+        }
+        private GameObject InstantiateCamp(JSON.Project project)
+        {
+            GameObject projectObj = Instantiate(_campPrefab, _projectSpawn);
+            projectObj.transform.GetComponent<ProjectObj>().title = project.title;
+            projectObj.transform.GetComponent<ProjectObj>().project_id = project.project_id;
+            projectObj.transform.GetComponent<ProjectObj>().created_at = project.created_at;
+            Debug.Log("project info : " + JsonUtility.ToJson(project));
+            return projectObj;
         }
 
-        return null;
-    }
-
-
-    private TankManager GetGameWinner()
-    {
-        for (int i = 0; i < m_Tanks.Length; i++)
+        public void ShootProject(string project_id, string project_title)
         {
-            if (m_Tanks[i].m_Wins == m_NumRoundsToWin)
-                return m_Tanks[i];
+            Time.timeScale = 0;
+            _userUIManager.ShowProjectDashboard(project_id, project_title);
         }
-
-        return null;
-    }
-
-
-    private string EndMessage()
-    {
-        string message = "DRAW!";
-
-        if (m_RoundWinner != null)
-            message = m_RoundWinner.m_ColoredPlayerText + " WINS THE ROUND!";
-
-        message += "\n\n\n\n";
-
-        for (int i = 0; i < m_Tanks.Length; i++)
+        public void ExitUserUI()
         {
-            message += m_Tanks[i].m_ColoredPlayerText + ": " + m_Tanks[i].m_Wins + " WINS\n";
-        }
-
-        if (m_GameWinner != null)
-            message = m_GameWinner.m_ColoredPlayerText + " WINS THE GAME!";
-
-        return message;
-    }
-*/
-
-    private void ResetAllTanks()
-    {
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            m_Tanks[i].Reset();
-        }
-    }
-
-
-    private void EnableTankControl()
-    {
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            m_Tanks[i].EnableControl();
-        }
-    }
-
-
-    private void DisableTankControl()
-    {
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            m_Tanks[i].DisableControl();
+            Time.timeScale = 1;
+            Debug.Log(Time.timeScale);
+            _tankShooting.DestroyShell();
+            _userUIManager.HideAllUI();
         }
     }
 }
