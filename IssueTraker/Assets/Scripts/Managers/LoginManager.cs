@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine.UI;
 using JSON;
 using System;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 public class LoginManager : MonoBehaviour
@@ -16,6 +15,8 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private TMP_InputField _signUpPw;
     [SerializeField] private TMP_InputField _signUpName;
     [SerializeField] private TMP_InputField _signUpEMail;
+
+    [SerializeField] private GameObject _signUpPage;
 
     public void LogIn()
     {
@@ -36,6 +37,7 @@ public class LoginManager : MonoBehaviour
     public void RequestSuccess()
     {
         Debug.Log("Ok");
+        _signUpPage.SetActive(false);
     }
     public void LogInSuccess()
     {

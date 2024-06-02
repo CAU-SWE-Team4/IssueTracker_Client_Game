@@ -5,9 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 using System;
-using Unity.VisualScripting.Dependencies.Sqlite;
 using JSON;
-using UnityEditor.SearchService;
 
 public class ProjectDashboardController : MonoBehaviour
 {
