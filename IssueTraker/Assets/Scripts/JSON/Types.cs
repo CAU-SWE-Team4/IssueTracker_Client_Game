@@ -60,8 +60,8 @@ namespace JSON
     public class ProjectStatistic  
     {
         public int day_issues;
-        public int month_issue;
-        public int total_issue;
+        public int month_issues;
+        public int total_issues;
         public int closed_issues;
 
     }

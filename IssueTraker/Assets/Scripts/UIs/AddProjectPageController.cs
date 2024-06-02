@@ -21,6 +21,8 @@ public class AddProjectPageController : MonoBehaviour
     }
     private void ClearMemberList()
     {
+        _userIdDrp.ClearOptions();
+        if (_newMemberContainer == null || _newMemberContainer.childCount == 0) return;
         for(int i=0;i<_newMemberContainer.childCount;i++)
         {
             Destroy(_newMemberContainer.GetChild(i).gameObject);
@@ -30,6 +32,11 @@ public class AddProjectPageController : MonoBehaviour
     public void AddUser()
     {
         if (_userIdDrp.captionText.text == null || _userIdDrp.captionText.text.Length == 0) return;
+        foreach (JSON.UserRole member in _projectInfo.members)
+        {
+            if (member.user_id == _userIdDrp.captionText.text)
+                return;
+        }
         string role = string.Empty;
         switch (_roleDrp.captionText.text)
         {
@@ -49,7 +56,7 @@ public class AddProjectPageController : MonoBehaviour
         memberObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = _userIdDrp.captionText.text;
         memberObj.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = _roleDrp.captionText.text;
         _projectInfo.members.Add(newMember);
-        _userIdDrp.options.Remove(new TMP_Dropdown.OptionData() { text = _userIdDrp.captionText.text });
+        _userIdDrp.options.Remove(new TMP_Dropdown.OptionData() { text = newMember.user_id });
     }
 
     public void AddUsertoList(string userId)

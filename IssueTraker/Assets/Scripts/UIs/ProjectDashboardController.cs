@@ -61,8 +61,8 @@ public class ProjectDashboardController : MonoBehaviour
     private void UpdateStatistic(ProjectStatistic obj)
     {
         _dayIssueTxt.text = obj.day_issues.ToString();
-        _monthIssueTxt.text = obj.month_issue.ToString();
-        _totalIssueTxt.text = obj.total_issue.ToString();
+        _monthIssueTxt.text = obj.month_issues.ToString();
+        _totalIssueTxt.text = obj.total_issues.ToString();
         _closedIssueTxt.text = obj.closed_issues.ToString();
     }
 
@@ -108,6 +108,9 @@ public class ProjectDashboardController : MonoBehaviour
         if (_searchIpF.text.Length == 0) 
             UpdateIssueList();
         else
-            UpdateIssueList(_filterOption.captionText.text, _searchIpF.text);
+        {
+            if (_filterOption.captionText.text == "state") UpdateIssueList(_filterOption.captionText.text, _searchIpF.text.ToUpper());
+            else UpdateIssueList(_filterOption.captionText.text, _searchIpF.text);
+        }
     }
 }

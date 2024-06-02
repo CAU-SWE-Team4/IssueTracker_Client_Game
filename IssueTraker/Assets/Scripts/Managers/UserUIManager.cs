@@ -32,7 +32,7 @@ public class UserUIManager : MonoBehaviour
     }
     public void RefreshProjectIssueList()
     {
-        _projectDashboard.transform.GetComponent<ProjectDashboardController>().UpdateIssueList();
+        _projectDashboard.transform.GetComponent<ProjectDashboardController>().UpdateProjectDashboard();
 
     }
     public void ShowIssueViewer(string project_id, string issue_id)

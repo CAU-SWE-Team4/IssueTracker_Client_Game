@@ -33,6 +33,7 @@ public class LoginManager : MonoBehaviour
         JSON.SignUp signUpInfo = new JSON.SignUp { user_id = _signUpId.text, password = _signUpPw.text, name = _signUpName.text, email = _signUpEMail.text };
         Debug.Log(JsonUtility.ToJson(signUpInfo));
         StartCoroutine(ConnectionManager.Post("user/signUp", signUpInfo, RequestSuccess, RequestBad, RequestUnAuth, RequestForbidden, true));
+        _signUpPage.SetActive(false);
     }
     public void RequestSuccess()
     {

@@ -99,6 +99,7 @@ public class IssueViewerController : MonoBehaviour
         _issueContentTxt.text = obj.description;
         _priorityTxt.text = obj.priority;
         _assigneeTxt.text = obj.assignee_id;
+        if (_assigneeTxt.text == null || _assigneeTxt.text.Length == 0) _assigneeTxt.text = "Not Assigned";
         _reporterTxt.text = obj.reporter_id;
         _dateTxt.text = $"commented at {obj.created_date.Substring(0, 4)}-{obj.created_date.Substring(5, 2)}-{obj.created_date.Substring(8, 2)}";
     }
@@ -130,7 +131,7 @@ public class IssueViewerController : MonoBehaviour
                         _assigneeSelectDropdown.gameObject.SetActive(false);
                         _prioritySelectDropdown.gameObject.SetActive(false);
                         _assignIssueDataBtn.gameObject.SetActive(false);
-                        _deleteIssueBtn.gameObject.SetActive(false);
+                        _deleteIssueBtn.transform.parent.gameObject.SetActive(false);
                         break;
                     case "PL":
                         if(_state != "CLOSED" && _state != "DISPOSED") _disposeIssueBtn.transform.parent.gameObject.SetActive(true);
@@ -149,7 +150,7 @@ public class IssueViewerController : MonoBehaviour
                         _assignIssueDataBtn.gameObject.SetActive(true);
                         FillDeveloperList();
 
-                        _deleteIssueBtn.gameObject.SetActive(true);
+                        _deleteIssueBtn.transform.parent.gameObject.SetActive(true);
                         break;
                     case "DEV":
                         _disposeIssueBtn.transform.parent.gameObject.SetActive(false);
@@ -162,7 +163,7 @@ public class IssueViewerController : MonoBehaviour
                         _assigneeSelectDropdown.gameObject.SetActive(false);
                         _prioritySelectDropdown.gameObject.SetActive(false);
                         _assignIssueDataBtn.gameObject.SetActive(false);
-                        _deleteIssueBtn.gameObject.SetActive(false);
+                        _deleteIssueBtn.transform.parent.gameObject.SetActive(false);
                         break;
                 }
             }
@@ -176,12 +177,12 @@ public class IssueViewerController : MonoBehaviour
         if(_state == "CLOSED" || _state == "DISPOSED")
         {
             _newCommentIpF.gameObject.SetActive(false) ;
-            _commentAssignBtn.gameObject.SetActive(false) ;
+            _commentAssignBtn.transform.parent.gameObject.SetActive(false) ;
         }
         else
         {
             _newCommentIpF.gameObject.SetActive(true);
-            _commentAssignBtn.gameObject.SetActive(true) ;
+            _commentAssignBtn.transform.parent.gameObject.SetActive(true) ;
         }
     }
 
