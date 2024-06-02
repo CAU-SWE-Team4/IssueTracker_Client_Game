@@ -22,6 +22,12 @@ namespace Tank
 
         private void OnTriggerEnter (Collider other)
         {
+            if(other.gameObject.tag == "ProjectObj")
+            {
+                GameManager.instance.ShootProject(other.transform.GetComponent<ProjectObj>().project_id, other.transform.GetComponent<ProjectObj>().title);
+            }
+
+
 			// Collect all the colliders in a sphere from the shell's current position to a radius of the explosion radius.
             Collider[] colliders = Physics.OverlapSphere (transform.position, m_ExplosionRadius, m_TankMask);
 

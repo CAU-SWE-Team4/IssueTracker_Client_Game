@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.APIObjs;
 using UnityEngine.Networking;
 using System.Text;
 using System.Threading.Tasks;
 using System;
-using Assets.Scripts.JSON;
+using JSON;
+using System.Security.Policy;
 
 public class ConnectionManager : MonoBehaviour
 {
@@ -31,7 +31,7 @@ public class ConnectionManager : MonoBehaviour
         if (beforeLogin)
             url = $"http://localhost:8080/{routeName}";
         else
-            url = $"http://localhost:8080/{routeName}/?id={{{id}}}&pw={{{pw}}}";
+            url = $"http://localhost:8080/{routeName}?id={id}&pw={pw}";
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
             string jsonFields = JsonUtility.ToJson(data);
@@ -43,19 +43,23 @@ public class ConnectionManager : MonoBehaviour
             Debug.Log($"request sent {url} : {jsonFields}");
 
             yield return request.SendWebRequest();
-            switch(request.responseCode)
+            switch (request.responseCode)
             {
                 case 200:
-                    handleResponse();
+                    if (handleResponse != null)
+                        handleResponse();
                     break;
                 case 400:
-                    handleBadRequest();
+                    if (handleBadRequest != null)
+                        handleBadRequest();
                     break;
                 case 401:
-                    handleUnauthorized();
+                    if (handleUnauthorized != null)
+                        handleUnauthorized();
                     break;
                 case 403:
-                    handleForbidden();
+                    if (handleForbidden != null)
+                        handleForbidden();
                     break;
             }
         }
@@ -63,27 +67,41 @@ public class ConnectionManager : MonoBehaviour
 
     public static IEnumerator Get<T>(string routeName, Action<T> handleResponse, Action handleBadRequest = null, Action handleUnauthorized = null, Action handleForbidden = null)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{routeName}?id={{{id}}}&pw={{{pw}}}", "GET"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{routeName}?id={id}&pw={pw}", "GET"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("Accept", "application/json");
-
+            Debug.Log("get request : " + $"http://localhost:8080/{routeName}?id={id}&pw={pw}");
             yield return request.SendWebRequest();
+            Debug.Log(request.downloadHandler?.text);
+            string getData = request.downloadHandler?.text;
+            if ( !getData.StartsWith("{")) {
+                if(routeName.Contains("user"))
+                    getData = $"{{\"members\":{getData}}}";
+                else if(routeName.Contains("comment"))
+                    getData = $"{{\"comments\":{getData}}}";
+                else
+                    getData = $"{{\"issues\":{getData}}}";
+            }
             switch (request.responseCode)
             {
                 case 200:
-                    T apiReponse = JsonUtility.FromJson<T>(request.downloadHandler?.text);
-                    handleResponse(apiReponse);
+                    T apiReponse = JsonUtility.FromJson<T>(getData);
+                    if(handleResponse != null)
+                        handleResponse(apiReponse);
                     break;
                 case 400:
-                    handleBadRequest();
+                    if (handleBadRequest != null)
+                        handleBadRequest();
                     break;
                 case 401:
-                    handleUnauthorized();
+                    if (handleUnauthorized != null)
+                        handleUnauthorized();
                     break;
                 case 403:
-                    handleForbidden();
+                    if (handleForbidden != null)
+                        handleForbidden();
                     break;
             }
         }
@@ -91,7 +109,7 @@ public class ConnectionManager : MonoBehaviour
 
     public static IEnumerator Put(string routeName, dynamic data, Action handleResponse = null, Action handleBadRequest = null, Action handleUnauthorized = null, Action handleForbidden = null)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{routeName}?id={{{id}}}&pw={{{pw}}}", "PUT"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{routeName}?id={id}&pw={pw}", "PUT"))
         {
             string jsonFields = JsonUtility.ToJson(data);
 
@@ -104,16 +122,20 @@ public class ConnectionManager : MonoBehaviour
             switch (request.responseCode)
             {
                 case 200:
-                    handleResponse();
+                    if(handleResponse != null)
+                        handleResponse();
                     break;
                 case 400:
-                    handleBadRequest();
+                    if(handleBadRequest != null)
+                        handleBadRequest();
                     break;
                 case 401:
-                    handleUnauthorized();
+                    if(handleUnauthorized != null)
+                        handleUnauthorized();
                     break;
                 case 403:
-                    handleForbidden();
+                    if(handleForbidden != null) 
+                        handleForbidden();
                     break;
             }
         }
@@ -121,7 +143,7 @@ public class ConnectionManager : MonoBehaviour
 
     public static IEnumerator Delete(string routeName, Action handleResponse = null, Action handleBadRequest = null, Action handleUnauthorized = null, Action handleForbidden = null)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{routeName}?id={{{id}}}&pw={{{pw}}}", "DELETE"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{routeName}?id={id}&pw={pw}", "DELETE"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
@@ -131,19 +153,22 @@ public class ConnectionManager : MonoBehaviour
             switch (request.responseCode)
             {
                 case 200:
-                    handleResponse();
+                    if (handleResponse != null)
+                        handleResponse();
                     break;
                 case 400:
-                    handleBadRequest();
+                    if (handleBadRequest != null)
+                        handleBadRequest();
                     break;
                 case 401:
-                    handleUnauthorized();
+                    if (handleUnauthorized != null)
+                        handleUnauthorized();
                     break;
                 case 403:
-                    handleForbidden();
+                    if (handleForbidden != null)
+                        handleForbidden();
                     break;
             }
         }
     }
-
 }

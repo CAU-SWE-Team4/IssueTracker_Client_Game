@@ -1,10 +1,9 @@
-﻿using Assets.Scripts.APIObjs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace Assets.Scripts.JSON
+namespace JSON
 {
 
     [Serializable]
@@ -49,7 +48,7 @@ namespace Assets.Scripts.JSON
     {
         public string project_id;
         public string title;
-        public string create_at;
+        public string created_at;
     }
 
     [Serializable]
@@ -92,7 +91,7 @@ namespace Assets.Scripts.JSON
     [Serializable]
     public class GetIssueList  
     {
-        public List<Issue> issues;
+        public List<GetIssue> issues;
     }
 
     [Serializable]
@@ -100,22 +99,24 @@ namespace Assets.Scripts.JSON
     {
         public string issue_id;
         public string issue_title;
-        public string reported_date;
+        public string created_date;
         public string state;
     }
 
     [Serializable]
     public class GetIssue  
     {
-        public string Title;
-        public string Description;
-        public string ReporterId;
-        public string ReporterDate;
-        public string EditedDate;
-        public string AssigneeId;
-        public string FixerId;
-        public string Priority;
-        public string State;
+        public string id;
+        public string project_id;
+        public string title;
+        public string description;
+        public string reporter_id;
+        public string assignee_id;
+        public string fixer_id;
+        public string priority;
+        public string state;
+        public string created_date;
+        public string modified_date;
     }
 
     [Serializable]
@@ -125,7 +126,7 @@ namespace Assets.Scripts.JSON
     }
 
     [Serializable]
-    public class Assignee  
+    public class AssignData  
     {
         public string user_id;
         public string priority;
@@ -148,7 +149,7 @@ namespace Assets.Scripts.JSON
     [Serializable]
     public class NewComment  
     {
-        public string contents;
+        public string content;
     }
 
 
@@ -161,10 +162,16 @@ namespace Assets.Scripts.JSON
     [Serializable]
     public class Comment  
     {
-        public string commentId;
-        public string authorId;
-        public string authorName;
+        public string comment_id;
+        public string author_id;
+        public string author_name;
         public string content;
-        public string createdDate;
+        public string created_date;
+    }
+
+    [Serializable]
+    public class EditCommentContent
+    {
+        public string content;
     }
 }
