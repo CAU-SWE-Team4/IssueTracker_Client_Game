@@ -34,7 +34,7 @@ public class AdminUIManager : MonoBehaviour
 
     public void GetProject()
     {
-        StartCoroutine(ConnectionManager.Get<JSON.GetProjects>($"project", CreateProject));
+        StartCoroutine(ConnectionManager.Get<JSON.GetProjects>($"project", "", "", CreateProject));
     }
 
     private void CreateProject(GetProjects obj)

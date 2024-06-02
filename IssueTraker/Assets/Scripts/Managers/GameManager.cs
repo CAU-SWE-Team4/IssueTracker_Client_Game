@@ -32,7 +32,7 @@ namespace Tank
 
         private void Start()
         {
-            StartCoroutine(ConnectionManager.Get<JSON.GetProjects>($"project", CreateProject));
+            StartCoroutine(ConnectionManager.Get<JSON.GetProjects>($"project", "", "", CreateProject));
         }
 
         private void CreateProject(JSON.GetProjects response)
