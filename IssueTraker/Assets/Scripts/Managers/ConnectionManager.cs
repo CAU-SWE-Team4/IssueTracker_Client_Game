@@ -181,8 +181,9 @@ public class ConnectionManager : MonoBehaviour
 
     public static IEnumerator Delete(string routeName, Action handleResponse = null, Action handleBadRequest = null, Action handleUnauthorized = null, Action handleForbidden = null)
     {
-        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8000/{routeName}?id={id}&pw={pw}", "DELETE"))
+        using (UnityWebRequest request = new UnityWebRequest($"http://localhost:8080/{routeName}?id={id}&pw={pw}", "DELETE"))
         {
+            Debug.Log($"http://localhost:8080/{routeName}?id={id}&pw={pw}");
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("Accept", "application/json");

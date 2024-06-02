@@ -22,6 +22,11 @@ namespace JSON
         public string name;
         public string email;
     }
+    [Serializable]
+    public class UserList
+    {
+        public List<UserInfo> members;
+    }
 
     [Serializable]
     public class UserInfo  

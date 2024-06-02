@@ -71,4 +71,9 @@ public class UserUIManager : MonoBehaviour
         _issueViewer.transform.GetComponent<IssueViewerController>().Initialize();
         _issueViewer.transform.GetComponent<IssueViewerController>().UpdateCommentList();
     }
+
+    public void UpdateIssueViewer()
+    {
+        _issueViewer.transform.GetComponent<IssueViewerController>().UpdateIssueViewer();
+    }
 }

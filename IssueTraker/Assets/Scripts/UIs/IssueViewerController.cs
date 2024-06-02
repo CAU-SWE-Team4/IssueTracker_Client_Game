@@ -9,6 +9,7 @@ using Unity.VisualScripting.Dependencies.Sqlite;
 using JSON;
 using System.ComponentModel.Design;
 using UnityEngine.Rendering.VirtualTexturing;
+using Tank;
 
 public class IssueData
 {
@@ -56,6 +57,7 @@ public class IssueViewerController : MonoBehaviour
     [SerializeField] private Button _issueFixedBtn;
     [SerializeField] private Button _issueResolvedBtn;
     [SerializeField] private Button _closeIssueBtn;
+    [SerializeField] private Button _deleteIssueBtn;
     [SerializeField] private Button _reopenIssueBtn;
     [SerializeField] private Button _commentAssignBtn;
 
@@ -76,7 +78,7 @@ public class IssueViewerController : MonoBehaviour
         }
     }
 
-    private void UpdateIssueViewer()
+    public void UpdateIssueViewer()
     {
         StartCoroutine(ConnectionManager.Get<JSON.GetIssue>($"project/{projectId}/issue/{issueId}", IssueInitialize));
     }
@@ -129,6 +131,7 @@ public class IssueViewerController : MonoBehaviour
                         _assigneeSelectDropdown.gameObject.SetActive(false);
                         _prioritySelectDropdown.gameObject.SetActive(false);
                         _assignIssueDataBtn.gameObject.SetActive(false);
+                        _deleteIssueBtn.gameObject.SetActive(false);
                         break;
                     case "PL":
                         if(_state != "CLOSED" && _state != "DISPOSED") _disposeIssueBtn.transform.parent.gameObject.SetActive(true);
@@ -147,6 +150,7 @@ public class IssueViewerController : MonoBehaviour
                         _assignIssueDataBtn.gameObject.SetActive(true);
                         FillDeveloperList();
 
+                        _deleteIssueBtn.gameObject.SetActive(true);
                         break;
                     case "DEV":
                         _disposeIssueBtn.transform.parent.gameObject.SetActive(false);
@@ -159,6 +163,7 @@ public class IssueViewerController : MonoBehaviour
                         _assigneeSelectDropdown.gameObject.SetActive(false);
                         _prioritySelectDropdown.gameObject.SetActive(false);
                         _assignIssueDataBtn.gameObject.SetActive(false);
+                        _deleteIssueBtn.gameObject.SetActive(false);
                         break;
                 }
             }
@@ -249,7 +254,12 @@ public class IssueViewerController : MonoBehaviour
     {
         UpdateIssueState("REOPEN");
     }
-    
+    public void DeleteIssue()
+    {
+        StartCoroutine(ConnectionManager.Delete($"project/{projectId}/issue/{issueId}", GameManager.instance.ExitUserUI));
+    }
+
+
     public void AssignIssueData()
     {
         JSON.AssignData assignData = new JSON.AssignData() { user_id = _assigneeSelectDropdown.captionText.text, priority = _prioritySelectDropdown.captionText.text };
@@ -331,9 +341,9 @@ public class IssueViewerController : MonoBehaviour
     {
         if(_playerRole == "TESTER")
         {
-            _newContentIpF.text = string.Empty;
             JSON.UpdateContents updateContents = new JSON.UpdateContents() { title = _titleTxt.text, description = _newContentIpF.text};
             StartCoroutine(ConnectionManager.Put($"project/{projectId}/issue/{issueId}/content", updateContents, UpdateIssueViewer));
+            _newContentIpF.text = string.Empty;
         }
     }
     

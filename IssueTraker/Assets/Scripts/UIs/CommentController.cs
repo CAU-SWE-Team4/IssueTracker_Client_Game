@@ -21,7 +21,7 @@ public class CommentController : MonoBehaviour
 
     public void ChangeOptionPage()
     {
-        _optionPage.SetActive(!_optionPage.active);
+        if(authorId == ConnectionManager.id) _optionPage.SetActive(!_optionPage.active);
     }
 
     public void UpdateCommentObj()
@@ -40,6 +40,7 @@ public class CommentController : MonoBehaviour
     public void DeleteComment()
     {
         StartCoroutine(ConnectionManager.Delete($"project/{projectId}/issue/{issueId}/comment/{commentId}"));
+        UserUIManager.instance.UpdateIssueViewer();
     }
 
     public void EditComment()

@@ -39,15 +39,13 @@ public class LoginManager : MonoBehaviour
     }
     public void LogInSuccess()
     {
+        ConnectionManager.id = _logInId.text;
+        ConnectionManager.pw = _logInPw.text;
         if(_logInId.text == "admin")
             SceneManager.LoadScene(1);
         else
-        {
-            ConnectionManager.id = _logInId.text;
-            ConnectionManager.pw = _logInPw.text;
             SceneManager.LoadScene(2);
-        }
-
+        
     }
     public void RequestBad()
     {
