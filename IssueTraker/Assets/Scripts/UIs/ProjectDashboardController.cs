@@ -29,7 +29,6 @@ public class ProjectDashboardController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _totalIssueTxt;
     [SerializeField] private TextMeshProUGUI _closedIssueTxt;
 
-    [SerializeField] private Button _searchBtn;
     [SerializeField] private Button _newIssueBtn;
     [SerializeField] private TMP_Dropdown _filterOption;
     [SerializeField] private TMP_InputField _searchIpF;
@@ -40,6 +39,7 @@ public class ProjectDashboardController : MonoBehaviour
 
     public void Initialize()
     {
+        if (_issueContainerTrf.childCount == 0) return;
         for(int i=0; i< _issueContainerTrf.childCount; i++)
         {
             Destroy(_issueContainerTrf.GetChild(i).gameObject);
@@ -56,7 +56,7 @@ public class ProjectDashboardController : MonoBehaviour
         projectId = project_id;
         _titleTxt.text = projectTitle;
         StartCoroutine(ConnectionManager.Get<JSON.UserRoles>($"project/{projectId}/userRole", ActivateNewIssue));
-        StartCoroutine(ConnectionManager.Get<JSON.GetIssueList>($"project/{projectId}/issue", CreateIssueBlock));
+        UpdateIssueList();
         StartCoroutine(ConnectionManager.Get<JSON.ProjectStatistic>($"project/{projectId}/issue/statistic", UpdateStatistic));
     }
 
@@ -68,10 +68,10 @@ public class ProjectDashboardController : MonoBehaviour
         _closedIssueTxt.text = obj.closed_issues.ToString();
     }
 
-    public void UpdateIssueList()
+    public void UpdateIssueList(string filterBy = "", string filterValue = "")
     {
         Initialize();
-        StartCoroutine(ConnectionManager.Get<JSON.GetIssueList>($"project/{projectId}/issue", CreateIssueBlock));
+        StartCoroutine(ConnectionManager.Get<JSON.GetIssueList>($"project/{projectId}/issue", filterBy, filterValue, CreateIssueBlock));
     }
 
     private void ActivateNewIssue(JSON.UserRoles roles)
@@ -103,5 +103,13 @@ public class ProjectDashboardController : MonoBehaviour
     {
         _newIssuePage.transform.GetComponent<NewIssuePageController>().projectId = projectId;
         _newIssuePage.SetActive(true);
+    }
+
+    public void SearchIssues()
+    {
+        if (_searchIpF.text.Length == 0) 
+            UpdateIssueList();
+        else
+            UpdateIssueList(_filterOption.captionText.text, _searchIpF.text);
     }
 }

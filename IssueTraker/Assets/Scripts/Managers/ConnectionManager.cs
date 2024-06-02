@@ -77,6 +77,8 @@ public class ConnectionManager : MonoBehaviour
             yield return request.SendWebRequest();
             Debug.Log(request.downloadHandler?.text);
             string getData = request.downloadHandler?.text;
+            if(routeName.Contains("issue"))
+                getData = $"{{\"issues\":{getData}}}";
             switch (request.responseCode)
             {
                 case 200:
